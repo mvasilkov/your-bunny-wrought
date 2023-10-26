@@ -17,4 +17,5 @@ include = ["yourbunnywrought*"]
 line-length = 119
 
 [tool.ruff]
+ignore = ["E402"]
 line-length = 119
