@@ -3,6 +3,8 @@
 from pathlib import Path
 import sys
 
+from zenith import zprint
+
 OUR_ROOT = Path(__file__).parents[1].resolve()
 
 if __name__ == '__main__' and not __package__:
@@ -12,14 +14,14 @@ if __name__ == '__main__' and not __package__:
 from . import VERSION
 
 BUNNER = rf'''
-   YOUR (\_/)
-  BUNNY ( •.•)
-WROUGHT /    つ v{VERSION}
+[010]   YOUR [012](\_/)
+[010]  BUNNY [012]( •.•)
+[010]WROUGHT [012]/    つ [010]v{VERSION}[/]
 '''
 
 
 def run():
-    print(BUNNER)
+    zprint(BUNNER)
 
 
 if __name__ == '__main__':
