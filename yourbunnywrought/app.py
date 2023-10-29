@@ -20,9 +20,11 @@ BUNNER = rf'''
 '''
 
 
-def run():
+def run(args):
     zprint(BUNNER)
 
 
 if __name__ == '__main__':
-    run()
+    from .args import args
+
+    run(args)
