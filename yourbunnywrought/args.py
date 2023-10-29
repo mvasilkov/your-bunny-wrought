@@ -1,6 +1,8 @@
 from argparse import ArgumentParser, ArgumentTypeError
 from pathlib import Path
 
+__all__ = ['args']
+
 
 def path_type(value):
     result = Path(value).resolve()
