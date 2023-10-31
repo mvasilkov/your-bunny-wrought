@@ -6,7 +6,9 @@ __all__ = ['Store']
 
 
 class Store(metaclass=SingletonMetaclass):
-    def __init__(self, burrow: Path):
+    burrow: Path
+
+    def set_burrow(self, burrow: Path):
         if not burrow.exists():
             burrow.mkdir(parents=True)
 
