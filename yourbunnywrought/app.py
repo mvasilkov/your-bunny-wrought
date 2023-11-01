@@ -18,7 +18,7 @@ from .store import Store
 BUNNER = rf'''
 [010]   YOUR [012](\_/)
 [010]  BUNNY [012]( •.•)
-[010]WROUGHT [012]/    つ [010]v{VERSION} | {PLATFORM}[/]
+[010]WROUGHT [012]/    つ [010]v{VERSION} │ {PLATFORM}[/]
 '''
 
 

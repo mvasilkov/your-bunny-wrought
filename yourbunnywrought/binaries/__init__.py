@@ -11,5 +11,12 @@ def _get_platform():
     return f'{system}_{machine}'.lower()
 
 
-PACKAGES = Path(__file__).parent.resolve()
 PLATFORM = _get_platform()
+EXE = '.exe' if PLATFORM.startswith('windows') else ''
+PROGRAMS = Path(__file__).parent.resolve() / PLATFORM
+
+
+def get_bundled_binary(name: str) -> Path | None:
+    archive_path = PROGRAMS / (name + EXE + '.xz')
+    if not archive_path.is_file():
+        return None
