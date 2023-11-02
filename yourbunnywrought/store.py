@@ -9,7 +9,7 @@ class Store(metaclass=SingletonMetaclass):
     burrow: Path
 
     def set_burrow(self, burrow: Path):
-        if not burrow.exists():
+        if not burrow.is_dir():
             burrow.mkdir(parents=True)
 
         self.burrow = burrow
