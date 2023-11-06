@@ -19,3 +19,6 @@ class ExternalExecutable:
             raise RuntimeError(f'Cannot understand `{self.executable} {self.version_option}`, got {result!r}')
 
         return version.group(1)
+
+    def run(self, *args) -> str:
+        return check_output([self.executable, *args], encoding='utf-8')
