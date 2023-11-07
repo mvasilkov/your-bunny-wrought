@@ -1,2 +1,3 @@
+httpx==0.25.1
 sh40-slate==0.7.0
 sh40-zenith==0.6.0
