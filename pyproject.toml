@@ -5,16 +5,23 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "but"
 requires-python = ">=3.12"
-dynamic = ["version"]
+dynamic = ["version", "dependencies"]
 
 [project.scripts]
 but = "yourbunnywrought.app:run"
 
 [tool.setuptools.dynamic]
 version = { attr = "yourbunnywrought.VERSION" }
+dependencies = { file = "requirements.txt" }
 
 [tool.setuptools.packages.find]
 include = ["yourbunnywrought*"]
+
+[tool.setuptools.package-data]
+"yourbunnywrought.binaries.linux_x86_64" = ["*.xz"]
+"yourbunnywrought.binaries.macos_arm64" = ["*.xz"]
+"yourbunnywrought.binaries.windows_amd64" = ["*.xz"]
+"yourbunnywrought.http" = ["useragents.json"]
 
 [tool.black]
 line-length = 119
