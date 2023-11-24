@@ -1,5 +1,8 @@
 # Your Bunny Wrought
 
+_Your Bunny Wrought_ (_but_ for short) is a collection of scripts
+related to file formats and compression.
+
 ## Installation
 
 ```bash
