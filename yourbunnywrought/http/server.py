@@ -1,9 +1,10 @@
 import contextlib
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 import socket
 
-__all__ = ['init_argparse', 'serve_static']
+__all__ = ['init_cli', 'invoke_cli', 'serve_static']
 
 
 class ServerClass(ThreadingHTTPServer):
@@ -33,8 +34,23 @@ def serve_static(directory, host='', port=4848):
         try:
             server.serve_forever()
         except KeyboardInterrupt:
-            print('Ctrl-C')
+            pass
 
 
-def init_argparse(parent_parser):
-    parser = parent_parser.add_subparsers().add_parser('serve_static')
+def init_cli(parent, ArgTypes):
+    parser = parent.add_parser('serve_static', add_help=False)
+
+    parser.add_argument(
+        'directory',
+        type=ArgTypes.existing_path_type,
+        default=Path.cwd(),
+        nargs='?',
+    )
+
+    return ['serve_static']
+
+
+def invoke_cli(args):
+    match args.command:
+        case 'serve_static':
+            serve_static(args.directory)
