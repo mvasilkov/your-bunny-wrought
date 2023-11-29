@@ -22,7 +22,7 @@ BUNNER = rf'''
 '''
 
 
-def run(args, module):
+def app(args, module):
     zprint(BUNNER)
 
     store = Store()
@@ -32,10 +32,14 @@ def run(args, module):
         module.invoke_cli(args)
 
 
-if __name__ == '__main__':
+def run():
     from .args import args
     from .cli_modules import CLI_RESOLVE_CMD_TO_MOD
 
     module = CLI_RESOLVE_CMD_TO_MOD.get(args.command)
 
-    run(args, module)
+    app(args, module)
+
+
+if __name__ == '__main__':
+    run()

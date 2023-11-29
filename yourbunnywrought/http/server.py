@@ -38,8 +38,10 @@ def serve_static(directory, host='', port=4848):
 
 
 def init_cli(parent, ArgTypes):
-    parser = parent.add_parser('serve_static', add_help=False)
+    parser = parent.add_parser('serve_static', aliases=['server'], add_help=False)
 
+    parser.add_argument('-h', '--host', default='')
+    parser.add_argument('-p', '--port', type=int, default=4848)
     parser.add_argument(
         'directory',
         type=ArgTypes.existing_path_type,
@@ -47,10 +49,10 @@ def init_cli(parent, ArgTypes):
         nargs='?',
     )
 
-    return ['serve_static']
+    return ['serve_static', 'server']
 
 
 def invoke_cli(args):
     match args.command:
-        case 'serve_static':
-            serve_static(args.directory)
+        case 'serve_static' | 'server':
+            serve_static(args.directory, args.host, args.port)

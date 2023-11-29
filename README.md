@@ -23,6 +23,7 @@ pip install -r requirements.txt
 ### Uploading to PyPI
 
 ```bash
-pip wheel .
+pip wheel --no-deps .
 twine upload but-*-py3-none-any.whl
+rm -r build/ but.egg-info/ but-*-py3-none-any.whl
 ```
