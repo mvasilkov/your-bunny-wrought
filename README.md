@@ -11,6 +11,12 @@ related to file formats and compression.
 pip install but
 ```
 
+## Usage
+
+```
+but serve_static [-h HOST] [-p PORT] [DIR]
+```
+
 ## Working on Your Bunny Wrought
 
 ```bash

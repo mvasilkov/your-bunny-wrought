@@ -14,6 +14,11 @@ class ServerClass(ThreadingHTTPServer):
         return super().server_bind()
 
 
+class HandlerClass(SimpleHTTPRequestHandler):
+    def version_string(self):
+        return 'yourbunnywrought'
+
+
 def _get_best_family(*address):
     addrlist = socket.getaddrinfo(
         *address,
@@ -26,8 +31,8 @@ def _get_best_family(*address):
 
 def serve_static(directory, host='', port=4848):
     ServerClass.address_family, server_address = _get_best_family(host, port)
-    HandlerClass = partial(SimpleHTTPRequestHandler, directory=directory)
-    with ServerClass(server_address, HandlerClass) as server:
+    HandlerClassPartial = partial(HandlerClass, directory=directory)
+    with ServerClass(server_address, HandlerClassPartial) as server:
         host, port = server.socket.getsockname()[:2]
         url_host = f'[{host}]' if ':' in host else host
         print(f'Listening on http://{url_host}:{port}/')
