@@ -9,6 +9,7 @@ __all__ = ['Store']
 
 class Store(metaclass=SingletonMetaclass):
     burrow: Path
+    working_directory: Path
 
     def set_burrow(self, burrow: Path):
         if not burrow.is_dir():

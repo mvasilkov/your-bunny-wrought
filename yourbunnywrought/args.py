@@ -28,7 +28,8 @@ class ArgTypes:
 
 parser = ArgumentParser(add_help=False)
 
-parser.add_argument('--burrow', type=ArgTypes.path_type, default=Path.home() / '.burrow')
+parser.add_argument('-B', '--burrow', type=ArgTypes.path_type, default=Path.home() / '.burrow')
+parser.add_argument('-C', '--working-dir', type=ArgTypes.existing_path_type, default=Path.cwd())
 
 subparsers = parser.add_subparsers(dest='command')
 for module in CLI_MODULES:

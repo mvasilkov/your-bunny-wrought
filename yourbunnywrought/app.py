@@ -27,6 +27,7 @@ def app(args, module):
 
     store = Store()
     store.set_burrow(args.burrow)
+    store.working_directory = args.working_dir
 
     if module is not None:
         module.invoke_cli(args)
