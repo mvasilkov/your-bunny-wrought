@@ -1,4 +1,6 @@
+beautifulsoup4==4.12.2
 Django==5.0.1
+html5lib==1.1
 httpx==0.26.0
 sh40-slate==0.7.0
 sh40-zenith==0.6.0
