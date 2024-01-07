@@ -13,7 +13,7 @@ if __name__ == '__main__' and not __package__:
 
 from . import VERSION
 from .binaries import PLATFORM
-from .store import Store
+from .scripts.batch import invoke
 
 BUNNER = rf'''
 [010]   YOUR [011](\_/)
@@ -25,12 +25,7 @@ BUNNER = rf'''
 def app(args, module):
     zprint(BUNNER)
 
-    store = Store()
-    store.set_burrow(args.burrow)
-    store.working_directory = args.working_dir
-
-    if module is not None:
-        module.invoke_cli(args)
+    invoke(args, module)
 
 
 def run():
