@@ -30,7 +30,10 @@ def get_engine(dirs: tuple[str] | None) -> Engine:
 
 
 def render_to_string(template_str: str, context: dict, dirs: Iterable[str] | None = None) -> str:
-    template = get_engine(tuple(dirs)).from_string(template_str)
+    if dirs is not None:
+        dirs = tuple(dirs)
+
+    template = get_engine(dirs).from_string(template_str)
     return template.render(Context(context))
 
 

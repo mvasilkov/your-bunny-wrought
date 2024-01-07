@@ -3,7 +3,7 @@ from pathlib import Path
 
 from .cli_modules import CLI_MODULES, CLI_RESOLVE_CMD_TO_MOD
 
-__all__ = ['args']
+__all__ = ['parser', 'args']
 
 
 class ArgTypes:
