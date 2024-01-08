@@ -13,7 +13,7 @@ if __name__ == '__main__' and not __package__:
 
 from . import VERSION
 from .binaries import PLATFORM
-from .scripts.batch import invoke
+from .scripts.batch import run
 
 BUNNER = rf'''
 [010]   YOUR [011](\_/)
@@ -25,10 +25,10 @@ BUNNER = rf'''
 def app(args, module):
     zprint(BUNNER)
 
-    invoke(args, module)
+    run(args, module)
 
 
-def run():
+def main():
     from .args import args
     from .cli_modules import CLI_RESOLVE_CMD_TO_MOD
 
@@ -38,4 +38,4 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    main()
