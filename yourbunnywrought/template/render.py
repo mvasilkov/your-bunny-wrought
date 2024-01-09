@@ -7,6 +7,7 @@ from typing import Iterable
 
 from django.template import Context, Engine
 
+from ..argtypes import ArgTypes
 from ..html.parser import get_title
 from ..store import Store
 
@@ -54,13 +55,13 @@ def render_template(
         return PageProps(title=get_title(hypertext), path=outfile)
 
 
-def init_cli(parent, ArgTypes):
+def init_cli(parent):
     parser = parent.add_parser('render_template', aliases=['template'], add_help=False)
 
     parser.add_argument(
         '-t',
         '--template-dir',
-        type=ArgTypes.existing_path_type,
+        type=ArgTypes.existing_directory_type,
         action='append',
     )
     parser.add_argument('-p', '--pages', action='store_true')

@@ -4,6 +4,8 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import socket
 
+from ..argtypes import ArgTypes
+
 __all__ = ['init_cli', 'invoke_cli', 'serve_static']
 
 
@@ -42,14 +44,14 @@ def serve_static(directory, host='', port=4848):
             pass
 
 
-def init_cli(parent, ArgTypes):
+def init_cli(parent):
     parser = parent.add_parser('serve_static', aliases=['server'], add_help=False)
 
     parser.add_argument('-h', '--host', default='')
     parser.add_argument('-p', '--port', type=int, default=4848)
     parser.add_argument(
         'directory',
-        type=ArgTypes.existing_path_type,
+        type=ArgTypes.existing_directory_type,
         default=Path.cwd(),
         nargs='?',
     )

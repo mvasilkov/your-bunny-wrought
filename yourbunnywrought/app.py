@@ -22,19 +22,14 @@ BUNNER = rf'''
 '''
 
 
-def app(args, module):
+def main():
+    from .args import get_args_module
+
+    args, module = get_args_module()
+
     zprint(BUNNER)
 
     run(args, module)
-
-
-def main():
-    from .args import args
-    from .cli_modules import CLI_RESOLVE_CMD_TO_MOD
-
-    module = CLI_RESOLVE_CMD_TO_MOD.get(args.command)
-
-    app(args, module)
 
 
 if __name__ == '__main__':

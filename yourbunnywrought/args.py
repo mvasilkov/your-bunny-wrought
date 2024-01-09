@@ -1,39 +1,47 @@
-from argparse import ArgumentParser, ArgumentTypeError
+from __future__ import annotations
+
+from argparse import ArgumentParser
 from pathlib import Path
 
+from .argtypes import ArgTypes
 from .cli_modules import CLI_MODULES, CLI_RESOLVE_CMD_TO_MOD
 
-__all__ = ['parser', 'args']
+__all__ = ['get_args_module', 'state']
 
 
-class ArgTypes:
-    @staticmethod
-    def path_type(value):
-        result = Path(value).resolve()
+class State:
+    parser: ArgumentParser
+    working_dir: Path
 
-        if result.exists() and not result.is_dir():
-            raise ArgumentTypeError(f'{value!r} is not a directory')
+    def __init__(self):
+        self.parser = ArgumentParser(add_help=False)
 
-        return result
+        self.parser.add_argument(
+            '-B',
+            '--burrow',
+            type=ArgTypes.directory_type,
+            default=Path('~/.burrow').expanduser(),
+        )
+        self.parser.add_argument(
+            '-C',
+            '--working-dir',
+            type=ArgTypes.working_directory_type,
+            default=Path('.').absolute(),
+        )
 
-    @staticmethod
-    def existing_path_type(value):
-        result = Path(value).resolve()
+        self.working_dir = self.parser.get_default('working_dir')
 
-        if not result.is_dir():
-            raise ArgumentTypeError(f'{value!r} is not a directory')
-
-        return result
+        subparsers = self.parser.add_subparsers(dest='command')
+        for module in CLI_MODULES:
+            for command in module.init_cli(subparsers):
+                CLI_RESOLVE_CMD_TO_MOD[command] = module
 
 
-parser = ArgumentParser(add_help=False)
+state = State()
 
-parser.add_argument('-B', '--burrow', type=ArgTypes.path_type, default=Path.home() / '.burrow')
-parser.add_argument('-C', '--working-dir', type=ArgTypes.existing_path_type, default=Path.cwd())
 
-subparsers = parser.add_subparsers(dest='command')
-for module in CLI_MODULES:
-    for command in module.init_cli(subparsers, ArgTypes):
-        CLI_RESOLVE_CMD_TO_MOD[command] = module
+def get_args_module(*xs):
+    args = state.parser.parse_args(*xs)
+    module = CLI_RESOLVE_CMD_TO_MOD.get(args.command)
 
-args = parser.parse_args()
+    return args, module

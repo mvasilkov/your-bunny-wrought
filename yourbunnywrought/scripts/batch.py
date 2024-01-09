@@ -22,11 +22,9 @@ def run(args, module):
 
 
 def run_line(line: str):
-    from ..args import parser
-    from ..cli_modules import CLI_RESOLVE_CMD_TO_MOD
+    from ..args import get_args_module
 
-    args = parser.parse_args(split(line))
-    module = CLI_RESOLVE_CMD_TO_MOD.get(args.command)
+    args, module = get_args_module(split(line))
 
     if module is None:
         raise UnknownModuleError()
