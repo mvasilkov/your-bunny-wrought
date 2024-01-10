@@ -1,3 +1,3 @@
-from .asar import Asar, align_int
+from .asar import align_int, load_asar
 
-__all__ = ['Asar', 'align_int']
+__all__ = ['align_int', 'load_asar']
