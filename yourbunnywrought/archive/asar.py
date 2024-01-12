@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import dataclass
-from enum import IntEnum
+from enum import StrEnum
 import json
 from pathlib import Path
 from struct import unpack
 
-__all__ = ['align_int', 'load_asar']
+__all__ = ['init_cli', 'invoke_cli', 'align_int', 'load_asar', 'unpack_asar']
 
 
 def align_int(n: int, p: int) -> int:
@@ -17,10 +17,10 @@ def align_int(n: int, p: int) -> int:
     return (n + p - 1) & -p
 
 
-class AsarEntryType(IntEnum):
-    OTHER = 0
-    DIR = 1
-    FILE = 2
+class AsarEntryType(StrEnum):
+    OTHER = 'unk '
+    DIR = 'dir '
+    FILE = 'file'
 
 
 @dataclass
@@ -54,8 +54,27 @@ class AsarArchive:
         else:
             yield AsarEntry(AsarEntryType.OTHER, path=path)
 
+    def unpack(self, entry: AsarEntry):
+        match entry.type:
+            case AsarEntryType.DIR:
+                entry.path.mkdir(parents=True)
+
+            case AsarEntryType.FILE:
+                self.fp.seek(self.header_end + entry.offset)
+                with entry.path.open('wb') as fp:
+                    fp.write(self.fp.read(entry.size))
+
 
 @contextmanager
 def load_asar(infile: Path):
     with infile.open('rb') as fp:
         yield AsarArchive(fp)
+
+
+def unpack_asar(infile: Path, outpath: Path):
+    parent_dir = outpath.parent
+
+    with load_asar(infile) as archive:
+        for entry in archive.entries(outpath):
+            print(f'{entry.type} │ {entry.path.relative_to(parent_dir)}')
+            archive.unpack(entry)

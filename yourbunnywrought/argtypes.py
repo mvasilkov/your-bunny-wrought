@@ -28,7 +28,22 @@ class ArgTypes:
         return result
 
     @staticmethod
+    def not_existing_path_type(value):
+        from .args import state
+
+        result = Path(state.working_dir, value).resolve()
+
+        if result.exists():
+            raise ArgumentTypeError(f'{value!r} already exists')
+
+        return result
+
+    @staticmethod
     def working_directory_type(value):
+        '''
+        Unique to the `--working-dir` option, this is used to set the working
+        directory during `parse_args()`.
+        '''
         from .args import state
 
         state.working_dir = ArgTypes.existing_directory_type(value)
