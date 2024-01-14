@@ -1,4 +1,6 @@
+from functools import cached_property
 import re
+from shutil import which
 from subprocess import check_output
 
 __all__ = ['ExternalExecutable']
@@ -11,8 +13,15 @@ class ExternalExecutable:
         self.version_pattern = version_pattern
         self.version_string = self.check_available()
 
+    @cached_property
+    def executable_path(self) -> str | None:
+        return which(self.executable)
+
     def check_available(self) -> str:
-        result = check_output([self.executable, self.version_option], encoding='utf-8')
+        if self.executable_path is None:
+            raise RuntimeError(f'Cannot resolve {self.executable}')
+
+        result = check_output([self.executable_path, self.version_option], encoding='utf-8')
 
         version = re.match(self.version_pattern, result, re.MULTILINE)
         if version is None:
@@ -21,4 +30,4 @@ class ExternalExecutable:
         return version.group(1)
 
     def run(self, *args) -> str:
-        return check_output([self.executable, *args], encoding='utf-8')
+        return check_output([self.executable_path, *args], encoding='utf-8')

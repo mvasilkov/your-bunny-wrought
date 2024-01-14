@@ -2,8 +2,9 @@ from enum import Enum
 
 from ..lazy import LazyVariable
 from .external_executable import ExternalExecutable
+from .node_modules import find_node_modules, find_node_modules_binary
 
-__all__ = ['ExternalExecutable', 'Tools']
+__all__ = ['ExternalExecutable', 'Tools', 'find_node_modules', 'find_node_modules_binary']
 
 
 class Tools(Enum):
