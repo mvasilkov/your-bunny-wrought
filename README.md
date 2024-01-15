@@ -16,7 +16,11 @@ pip install but
 ```
 but serve_static [-h HOST] [-p PORT] [DIR]
 
+    Alias: server
+
 but render_template [-t TEMPLATE_DIR] PATTERN [PATTERN ...]
+
+    Alias: template
 ```
 
 ## Working on Your Bunny Wrought
