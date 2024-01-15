@@ -3,6 +3,8 @@ import re
 from shutil import which
 from subprocess import check_output
 
+from .node_modules import find_node_modules_binary
+
 __all__ = ['ExternalExecutable']
 
 
@@ -31,3 +33,12 @@ class ExternalExecutable:
 
     def run(self, *args) -> str:
         return check_output([self.executable_path, *args], encoding='utf-8')
+
+
+class ExternalExecutableNodeJS(ExternalExecutable):
+    @cached_property
+    def executable_path(self) -> str | None:
+        if (result := find_node_modules_binary(self.executable)) is not None:
+            return result
+
+        return which(self.executable)
