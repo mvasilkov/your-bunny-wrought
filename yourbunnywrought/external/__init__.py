@@ -1,5 +1,3 @@
-from enum import Enum
-
 from ..lazy import LazyVariable
 from .external_executable import ExternalExecutable, ExternalExecutableNodeJS
 from .node_modules import find_node_modules, find_node_modules_binary
@@ -7,7 +5,7 @@ from .node_modules import find_node_modules, find_node_modules_binary
 __all__ = ['Tools', 'find_node_modules', 'find_node_modules_binary']
 
 
-class Tools(Enum):
+class Tools:
     ffmpeg = LazyVariable(
         lambda: ExternalExecutable(
             executable='ffmpeg',
@@ -22,3 +20,6 @@ class Tools(Enum):
             version_pattern=r'Version (\S+)',
         )
     )
+
+    def __new__(cls):
+        raise TypeError(f'Cannot instantiate static class {cls.__name__}')
