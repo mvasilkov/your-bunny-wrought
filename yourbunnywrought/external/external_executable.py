@@ -3,9 +3,12 @@ import re
 from shutil import which
 from subprocess import check_output
 
+from ..binaries import PLATFORM
 from .node_modules import find_node_modules_binary
 
 __all__ = ['ExternalExecutable']
+
+NODEJS_EXT = '.cmd' if PLATFORM.startswith('win') else ''
 
 
 class ExternalExecutable:
@@ -36,6 +39,11 @@ class ExternalExecutable:
 
 
 class ExternalExecutableNodeJS(ExternalExecutable):
+    def __init__(self, *, executable: str, version_option: str, version_pattern: str):
+        super().__init__(
+            executable=executable + NODEJS_EXT, version_option=version_option, version_pattern=version_pattern
+        )
+
     @cached_property
     def executable_path(self) -> str | None:
         if (result := find_node_modules_binary(self.executable)) is not None:

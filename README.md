@@ -23,6 +23,13 @@ but render_template [-t TEMPLATE_DIR] PATTERN [PATTERN ...]
     Alias: template
 ```
 
+### External Executables
+
+```
+but ffmpeg -- [ARGS]
+but tsc -- [ARGS]
+```
+
 ## Working on Your Bunny Wrought
 
 ```bash
