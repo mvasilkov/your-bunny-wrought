@@ -21,10 +21,10 @@ def run(args, module):
         module.invoke_cli(args)
 
 
-def run_line(line: str):
+def run_line(tokens: list[str]):
     from ..args import get_args_module
 
-    args, module = get_args_module(split(line))
+    args, module = get_args_module(tokens)
 
     if module is None:
         raise UnknownModuleError()
@@ -36,7 +36,7 @@ def run_script(script: Path):
     for line in script.read_text(encoding='utf-8').splitlines():
         try:
             print(f'{script.name} │ {line}')
-            run_line(line)
+            run_line(split(line))
         except UnknownModuleError:
             print('Unknown operation')
             break
