@@ -5,7 +5,7 @@ from shlex import split
 
 from ..store import Store
 
-__all__ = ['init_cli', 'invoke_cli', 'run']
+__all__ = ['init_cli', 'invoke_cli', 'run', 'run_line', 'run_script']
 
 
 class UnknownModuleError(RuntimeError):

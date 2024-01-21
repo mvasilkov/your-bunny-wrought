@@ -9,8 +9,9 @@ from pathlib import Path
 from watchfiles import Change, awatch
 
 from ..argtypes import ArgTypes
+from ..scripts import run_line
 
-__all__ = ['init_cli', 'invoke_cli', 'watch_files']
+__all__ = ['init_cli', 'invoke_cli', 'watch_files', 'handle_updates']
 
 
 @dataclass
@@ -46,6 +47,12 @@ async def watch_files(paths: list[Path], handlers: list[FileChangeHandler]):
                 break
 
 
+async def handle_updates():
+    while True:
+        script = await _updates.get()
+        run_line(script)
+
+
 def _load_handlers_file(infile: Path) -> tuple[list[Path], list[FileChangeHandler]]:
     obj = json.loads(infile.read_text(encoding='utf-8'))
 
@@ -67,4 +74,14 @@ def invoke_cli(args):
     match args.command:
         case 'watch_files' | 'watch':
             paths, handlers = _load_handlers_file(args.handlers_file)
-            asyncio.run(watch_files(paths, handlers))
+
+            loop = asyncio.get_event_loop()
+
+            try:
+                loop.create_task(watch_files(paths, handlers))
+                loop.create_task(handle_updates())
+                loop.run_forever()
+            except KeyboardInterrupt:
+                pass
+            finally:
+                loop.close()
