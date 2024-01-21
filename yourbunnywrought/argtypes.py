@@ -28,6 +28,17 @@ class ArgTypes:
         return result
 
     @staticmethod
+    def existing_file_type(value):
+        from .args import state
+
+        result = Path(state.working_dir, value).resolve()
+
+        if not result.is_file():
+            raise ArgumentTypeError(f'{value!r} is not a file')
+
+        return result
+
+    @staticmethod
     def not_existing_path_type(value):
         from .args import state
 
