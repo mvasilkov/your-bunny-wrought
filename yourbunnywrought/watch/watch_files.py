@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from fnmatch import fnmatch
 import json
 from pathlib import Path
+import sys
+from typing import Literal
 
 from watchfiles import Change, awatch
 
@@ -53,8 +55,9 @@ async def handle_updates():
         run_line(script)
 
 
-def _load_handlers_file(infile: Path) -> tuple[list[Path], list[FileChangeHandler]]:
-    obj = json.loads(infile.read_text(encoding='utf-8'))
+def _load_handlers_file(infile: Literal['-'] | Path) -> tuple[list[Path], list[FileChangeHandler]]:
+    text = sys.stdin.read() if infile == '-' else infile.read_text(encoding='utf-8')
+    obj = json.loads(text)
 
     paths = [ArgTypes.existing_directory_type(path) for path in obj['paths']]
     handlers = [FileChangeHandler(handler['patterns'], handler['script']) for handler in obj['handlers']]
@@ -65,7 +68,13 @@ def _load_handlers_file(infile: Path) -> tuple[list[Path], list[FileChangeHandle
 def init_cli(parent):
     parser = parent.add_parser('watch_files', aliases=['watch'], add_help=False)
 
-    parser.add_argument('handlers_file', type=ArgTypes.existing_file_type)
+    parser.add_argument(
+        'handlers_file',
+        type=ArgTypes.one_of_type(
+            ArgTypes.stdin_literal_type,
+            ArgTypes.existing_file_type,
+        ),
+    )
 
     return ['watch_files', 'watch']
 
@@ -75,13 +84,13 @@ def invoke_cli(args):
         case 'watch_files' | 'watch':
             paths, handlers = _load_handlers_file(args.handlers_file)
 
-            loop = asyncio.get_event_loop()
+            async def watch():
+                await asyncio.gather(
+                    watch_files(paths, handlers),
+                    handle_updates(),
+                )
 
             try:
-                loop.create_task(watch_files(paths, handlers))
-                loop.create_task(handle_updates())
-                loop.run_forever()
+                asyncio.run(watch())
             except KeyboardInterrupt:
                 pass
-            finally:
-                loop.close()

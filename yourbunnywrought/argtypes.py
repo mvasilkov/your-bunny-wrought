@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 from argparse import ArgumentTypeError
 from pathlib import Path
+from typing import Literal
 
 __all__ = ['ArgTypes']
 
 
 class ArgTypes:
     @staticmethod
-    def directory_type(value):
+    def directory_type(value: str) -> Path:
         from .args import state
 
         result = Path(state.working_dir, value).resolve()
@@ -17,7 +20,7 @@ class ArgTypes:
         return result
 
     @staticmethod
-    def existing_directory_type(value):
+    def existing_directory_type(value: str) -> Path:
         from .args import state
 
         result = Path(state.working_dir, value).resolve()
@@ -28,7 +31,7 @@ class ArgTypes:
         return result
 
     @staticmethod
-    def existing_file_type(value):
+    def existing_file_type(value: str) -> Path:
         from .args import state
 
         result = Path(state.working_dir, value).resolve()
@@ -39,7 +42,7 @@ class ArgTypes:
         return result
 
     @staticmethod
-    def not_existing_path_type(value):
+    def not_existing_path_type(value: str) -> Path:
         from .args import state
 
         result = Path(state.working_dir, value).resolve()
@@ -50,7 +53,7 @@ class ArgTypes:
         return result
 
     @staticmethod
-    def working_directory_type(value):
+    def working_directory_type(value: str) -> Path:
         '''
         Unique to the `--working-dir` option, this is used to set the working
         directory during `parse_args()`.
@@ -60,3 +63,24 @@ class ArgTypes:
         state.working_dir = ArgTypes.existing_directory_type(value)
 
         return state.working_dir
+
+    @staticmethod
+    def stdin_literal_type(value: str) -> Literal['-']:
+        if value == '-':
+            return value
+
+        raise ArgumentTypeError(f'{value!r} is not the literal `-`')
+
+    @staticmethod
+    def one_of_type(*types):
+        def _one_of_type(value):
+            for fn in types:
+                try:
+                    return fn(value)
+                except Exception:
+                    continue
+
+            readable_types = ', '.join(fn.__name__ for fn in types)
+            raise ArgumentTypeError(f'{value!r} is not one of ({readable_types})')
+
+        return _one_of_type
