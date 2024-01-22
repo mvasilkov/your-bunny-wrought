@@ -5,8 +5,7 @@ from dataclasses import dataclass
 from fnmatch import fnmatch
 import json
 from pathlib import Path
-import sys
-from typing import Literal
+from typing import IO
 
 from watchfiles import Change, awatch
 
@@ -52,12 +51,13 @@ async def watch_files(paths: list[Path], handlers: list[FileChangeHandler]):
 async def handle_updates():
     while True:
         script = await _updates.get()
+        print(f'watch_files │ {' '.join(script)}')
         run_line(script)
 
 
-def _load_handlers_file(infile: Literal['-'] | Path) -> tuple[list[Path], list[FileChangeHandler]]:
-    text = sys.stdin.read() if infile == '-' else infile.read_text(encoding='utf-8')
-    obj = json.loads(text)
+def _load_handlers_file(infile: IO[str] | Path) -> tuple[list[Path], list[FileChangeHandler]]:
+    file_contents = infile.read_text(encoding='utf-8') if isinstance(infile, Path) else infile.read()
+    obj = json.loads(file_contents)
 
     paths = [ArgTypes.existing_directory_type(path) for path in obj['paths']]
     handlers = [FileChangeHandler(handler['patterns'], handler['script']) for handler in obj['handlers']]

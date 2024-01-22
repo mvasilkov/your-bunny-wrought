@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from argparse import ArgumentTypeError
 from pathlib import Path
-from typing import Literal
+import sys
+from typing import IO
 
 __all__ = ['ArgTypes']
 
@@ -42,6 +43,23 @@ class ArgTypes:
         return result
 
     @staticmethod
+    def existing_script_file_type(value: str) -> Path:
+        from .args import state
+
+        results = [
+            Path(state.working_dir, value).resolve(),
+            Path(state.working_dir, value + '.bb').resolve(),
+            Path(state.working_dir, 'scripts', value).resolve(),
+            Path(state.working_dir, 'scripts', value + '.bb').resolve(),
+        ]
+
+        for result in results:
+            if result.is_file():
+                return result
+
+        raise ArgumentTypeError(f'{value!r} is not a script file')
+
+    @staticmethod
     def not_existing_path_type(value: str) -> Path:
         from .args import state
 
@@ -65,9 +83,9 @@ class ArgTypes:
         return state.working_dir
 
     @staticmethod
-    def stdin_literal_type(value: str) -> Literal['-']:
+    def stdin_literal_type(value: str) -> IO[str]:
         if value == '-':
-            return value
+            return sys.stdin
 
         raise ArgumentTypeError(f'{value!r} is not the literal `-`')
 
