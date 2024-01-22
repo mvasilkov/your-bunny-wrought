@@ -51,7 +51,7 @@ async def watch_files(paths: list[Path], handlers: list[FileChangeHandler]):
 async def handle_updates():
     while True:
         script = await _updates.get()
-        print(f'watch_files │ {' '.join(script)}')
+        print(f'watch_files │ {" ".join(script)}')
         run_line(script)
 
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from io import StringIO
 from pathlib import Path
 from shlex import split
 import sys
@@ -42,14 +43,20 @@ def run_line(tokens: list[str], replace_stdin: IO[str] | None = None):
 
 def run_script(script: IO[str] | Path):
     file_contents = script.read_text(encoding='utf-8') if isinstance(script, Path) else script.read()
-    lines = file_contents.splitlines()
+    lines = (ln for ln in file_contents.splitlines())
 
     for line in lines:
         tokens = split(line)
 
+        if tokens[-1].startswith('<<'):
+            end = tokens.pop()[2:]
+            replace_stdin = StringIO('\n'.join(ln for ln in lines if ln != end))
+        else:
+            replace_stdin = None
+
         try:
             print(f'{script.name} │ {line}')
-            run_line(tokens)
+            run_line(tokens, replace_stdin)
         except UnknownModuleError:
             print('Unknown operation')
             break
