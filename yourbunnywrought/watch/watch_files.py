@@ -52,7 +52,10 @@ async def handle_updates():
     while True:
         script = await _updates.get()
         print(f'watch_files │ {" ".join(script)}')
-        run_line(script)
+
+        if (thread := run_line(script)) is not None:
+            print('watch_files │ blocking on persistent script')
+            thread.join()
 
 
 def _load_definition_file(infile: IO[str] | Path) -> tuple[list[Path], list[FileChangeHandler]]:
@@ -94,3 +97,6 @@ def invoke_cli(args):
                 asyncio.run(watch())
             except KeyboardInterrupt:
                 pass
+
+
+invoke_cli.persistent = True

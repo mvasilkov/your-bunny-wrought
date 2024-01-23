@@ -29,7 +29,8 @@ def main():
 
     zprint(BUNNER)
 
-    run(args, module)
+    if (thread := run(args, module)) is not None:
+        thread.join()
 
 
 if __name__ == '__main__':

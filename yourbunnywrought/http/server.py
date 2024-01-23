@@ -63,3 +63,6 @@ def invoke_cli(args):
     match args.command:
         case 'serve_static' | 'server':
             serve_static(args.directory, args.host, args.port)
+
+
+invoke_cli.persistent = True

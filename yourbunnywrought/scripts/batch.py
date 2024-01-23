@@ -4,6 +4,7 @@ from io import StringIO
 from pathlib import Path
 from shlex import split
 import sys
+from threading import Thread
 from typing import IO
 
 from ..argtypes import ArgTypes
@@ -16,16 +17,22 @@ class UnknownModuleError(RuntimeError):
     pass
 
 
-def run(args, module):
+def run(args, module) -> Thread | None:
     store = Store()
     store.set_burrow(args.burrow)
     store.working_directory = args.working_dir
 
     if module is not None:
+        if getattr(module.invoke_cli, 'persistent', False):
+            thread = Thread(target=module.invoke_cli, args=(args,))
+            thread.start()
+
+            return thread
+
         module.invoke_cli(args)
 
 
-def run_line(tokens: list[str], replace_stdin: IO[str] | None = None):
+def run_line(tokens: list[str], replace_stdin: IO[str] | None = None) -> Thread | None:
     from ..args import get_args_module
 
     args, module = get_args_module(tokens)
@@ -38,12 +45,13 @@ def run_line(tokens: list[str], replace_stdin: IO[str] | None = None):
             if getattr(args, var) is sys.stdin:
                 setattr(args, var, replace_stdin)
 
-    run(args, module)
+    return run(args, module)
 
 
 def run_script(script: IO[str] | Path):
     file_contents = script.read_text(encoding='utf-8') if isinstance(script, Path) else script.read()
     lines = (ln for ln in file_contents.splitlines())
+    threads: list[Thread] = []
 
     for line in lines:
         if line.startswith('#'):
@@ -59,10 +67,14 @@ def run_script(script: IO[str] | Path):
 
         try:
             print(f'{script.name} │ {line}')
-            run_line(tokens, replace_stdin)
+            if (thread := run_line(tokens, replace_stdin)) is not None:
+                threads.append(thread)
         except UnknownModuleError:
             print('Unknown operation')
             break
+
+    for thread in threads:
+        thread.join()
 
 
 def init_cli(parent):
