@@ -11,7 +11,7 @@ related to file formats and compression.
 pip install but
 ```
 
-## Usage
+## CLI Usage
 
 ```
 but serve_static [-h HOST] [-p PORT] [DIR]
@@ -21,6 +21,32 @@ but serve_static [-h HOST] [-p PORT] [DIR]
 but render_template [-t TEMPLATE_DIR] PATTERN [PATTERN ...]
 
     Alias: template
+
+but run_script SCRIPT
+
+    Alias: run
+```
+
+### Watching for Changes
+
+```
+but watch_files DEF_FILE
+
+    Alias: watch
+```
+
+DEF_FILE is a JSON definition file with the following structure:
+
+```json
+{
+  "paths": ["."],
+  "handlers": [
+    {
+      "patterns": ["**/*.py"],
+      "script": ["echo", "File changed:", ":file"]
+    }
+  ]
+}
 ```
 
 ### External Executables

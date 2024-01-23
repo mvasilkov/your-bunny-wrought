@@ -46,6 +46,9 @@ def run_script(script: IO[str] | Path):
     lines = (ln for ln in file_contents.splitlines())
 
     for line in lines:
+        if line.startswith('#'):
+            continue
+
         tokens = split(line)
 
         if tokens[-1].startswith('<<'):

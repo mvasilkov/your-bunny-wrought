@@ -55,7 +55,7 @@ async def handle_updates():
         run_line(script)
 
 
-def _load_handlers_file(infile: IO[str] | Path) -> tuple[list[Path], list[FileChangeHandler]]:
+def _load_definition_file(infile: IO[str] | Path) -> tuple[list[Path], list[FileChangeHandler]]:
     file_contents = infile.read_text(encoding='utf-8') if isinstance(infile, Path) else infile.read()
     obj = json.loads(file_contents)
 
@@ -69,7 +69,7 @@ def init_cli(parent):
     parser = parent.add_parser('watch_files', aliases=['watch'], add_help=False)
 
     parser.add_argument(
-        'handlers_file',
+        'definition_file',
         type=ArgTypes.one_of_type(
             ArgTypes.stdin_literal_type,
             ArgTypes.existing_file_type,
@@ -82,7 +82,7 @@ def init_cli(parent):
 def invoke_cli(args):
     match args.command:
         case 'watch_files' | 'watch':
-            paths, handlers = _load_handlers_file(args.handlers_file)
+            paths, handlers = _load_definition_file(args.definition_file)
 
             async def watch():
                 await asyncio.gather(
