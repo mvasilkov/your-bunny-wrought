@@ -74,7 +74,10 @@ def run_script(script: IO[str] | Path):
             break
 
     for thread in threads:
-        thread.join()
+        try:
+            thread.join()
+        except KeyboardInterrupt:
+            pass
 
 
 def init_cli(parent):

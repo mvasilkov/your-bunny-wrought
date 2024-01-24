@@ -30,7 +30,10 @@ def main():
     zprint(BUNNER)
 
     if (thread := run(args, module)) is not None:
-        thread.join()
+        try:
+            thread.join()
+        except KeyboardInterrupt:
+            pass
 
 
 if __name__ == '__main__':

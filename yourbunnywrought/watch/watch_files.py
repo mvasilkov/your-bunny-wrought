@@ -55,7 +55,10 @@ async def handle_updates():
 
         if (thread := run_line(script)) is not None:
             print('watch_files │ blocking on persistent script')
-            thread.join()
+            try:
+                thread.join()
+            except KeyboardInterrupt:
+                pass
 
 
 def _load_definition_file(infile: IO[str] | Path) -> tuple[list[Path], list[FileChangeHandler]]:
