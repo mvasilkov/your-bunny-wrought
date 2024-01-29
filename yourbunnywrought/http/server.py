@@ -52,7 +52,7 @@ def init_cli(parent):
     parser.add_argument(
         'directory',
         type=ArgTypes.existing_directory_type,
-        default=Path.cwd(),
+        default='.',
         nargs='?',
     )
 

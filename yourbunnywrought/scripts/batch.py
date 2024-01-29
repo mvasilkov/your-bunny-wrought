@@ -54,14 +54,21 @@ def run_script(script: IO[str] | Path):
     threads: list[Thread] = []
 
     for line in lines:
-        if line.startswith('#'):
+        if not line or line.startswith('#'):
             continue
 
         tokens = split(line)
 
         if tokens[-1].startswith('<<'):
             end = tokens.pop()[2:]
-            replace_stdin = StringIO('\n'.join(ln for ln in lines if ln != end))
+
+            collect_lines = []
+            for ln in lines:
+                if ln == end:
+                    break
+                collect_lines.append(ln)
+
+            replace_stdin = StringIO('\n'.join(collect_lines))
         else:
             replace_stdin = None
 
