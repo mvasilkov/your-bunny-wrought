@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cache, cached_property
+from os.path import isabs
 from pathlib import Path
 from typing import Iterable
 
@@ -77,9 +78,16 @@ def invoke_cli(args):
     match args.command:
         case 'render_template' | 'template':
             for pattern in args.pattern:
-                for path in store.working_directory.glob(pattern):
+                for path in _glob(store.working_directory, pattern):
                     print('*', path.relative_to(store.working_directory))
                     context = {'pages': pages} if args.pages else {}
                     page_props = render_template(path, context, args.template_dir, args.pages)
                     if page_props is not None:
                         pages.append(page_props)
+
+
+def _glob(path: Path, pattern: str) -> Iterable[Path]:
+    if isabs(pattern):
+        return (Path(pattern),)
+
+    return path.glob(pattern)

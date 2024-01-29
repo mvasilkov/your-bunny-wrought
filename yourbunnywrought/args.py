@@ -41,6 +41,7 @@ state = State()
 
 
 def get_args_module(*xs):
+    state.working_dir = state.parser.get_default('working_dir')
     args = state.parser.parse_args(*xs)
     module = CLI_RESOLVE_CMD_TO_MOD.get(args.command)
 

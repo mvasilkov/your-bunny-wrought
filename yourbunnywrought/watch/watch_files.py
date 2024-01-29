@@ -22,13 +22,13 @@ class FileChangeHandler:
     expects_file: bool = False
 
     def __post_init__(self):
-        self.expects_file = any(token == ':file' for token in self.script)
+        self.expects_file = any(token == '{file}' for token in self.script)
 
     def script_for_path(self, path: str):
         if not self.expects_file:
             return self.script
 
-        return [token if token != ':file' else path for token in self.script]
+        return [token if token != '{file}' else path for token in self.script]
 
 
 _updates = asyncio.Queue()

@@ -45,7 +45,7 @@ DEF_FILE is a JSON definition file with the following structure:
   "handlers": [
     {
       "patterns": ["**/*.py"],
-      "script": ["echo", "File changed:", ":file"]
+      "script": ["echo", "File changed:", "{file}"]
     }
   ]
 }
