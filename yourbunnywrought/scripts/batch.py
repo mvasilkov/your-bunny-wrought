@@ -80,11 +80,11 @@ def run_script(script: IO[str] | Path):
             print('Unknown operation')
             break
 
-    for thread in threads:
-        try:
+    try:
+        for thread in threads:
             thread.join()
-        except KeyboardInterrupt:
-            pass
+    except KeyboardInterrupt:
+        sys.exit()
 
 
 def init_cli(parent):
