@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from functools import cached_property
+from pathlib import Path
 import re
 from shutil import which
 from subprocess import check_output
@@ -45,7 +48,7 @@ class ExternalExecutableNodeJS(ExternalExecutable):
         )
 
     @cached_property
-    def executable_path(self) -> str | None:
+    def executable_path(self) -> Path | str | None:
         if (result := find_node_modules_binary(self.executable)) is not None:
             return result
 

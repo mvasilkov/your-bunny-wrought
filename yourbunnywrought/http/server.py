@@ -1,7 +1,6 @@
 import contextlib
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
 import socket
 
 from ..argtypes import ArgTypes

@@ -48,9 +48,9 @@ class ArgTypes:
 
         results = [
             Path(state.working_dir, value).resolve(),
-            Path(state.working_dir, value + '.bb').resolve(),
+            Path(state.working_dir, value + '.b').resolve(),
             Path(state.working_dir, 'scripts', value).resolve(),
-            Path(state.working_dir, 'scripts', value + '.bb').resolve(),
+            Path(state.working_dir, 'scripts', value + '.b').resolve(),
         ]
 
         for result in results:
