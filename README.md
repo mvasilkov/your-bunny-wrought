@@ -1,6 +1,6 @@
 # Your Bunny Wrought
 
-<img src="./fluff/bunny.png" height="256" width="256">
+<img src="https://raw.githubusercontent.com/mvasilkov/your-bunny-wrought/master/fluff/bunny.jpeg" height="256" width="256">
 
 [_Your Bunny Wrought_][git] (_but_ for short) is a collection of scripts
 related to file formats and compression.
