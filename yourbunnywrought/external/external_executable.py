@@ -4,7 +4,7 @@ from functools import cached_property
 from pathlib import Path
 import re
 from shutil import which
-from subprocess import check_output
+from subprocess import check_call, check_output
 
 from ..binaries import PLATFORM
 from .node_modules import find_node_modules_binary
@@ -37,7 +37,10 @@ class ExternalExecutable:
 
         return version.group(1)
 
-    def run(self, *args) -> str:
+    def run(self, *args):
+        check_call([self.executable_path, *args])
+
+    def run_read_output(self, *args) -> str:
         return check_output([self.executable_path, *args], encoding='utf-8')
 
 

@@ -16,6 +16,4 @@ def init_cli(parent):
 def invoke_cli(args):
     executable = getattr(Tools, args.command)
 
-    result = executable.run(*args.options)
-
-    print(result)
+    executable.run(*args.options)

@@ -23,7 +23,7 @@ def run(args, module) -> Thread | None:
     store.working_directory = args.working_dir
 
     if module is not None:
-        if getattr(module.invoke_cli, 'persistent', False):
+        if args.persistent or getattr(module.invoke_cli, 'persistent', False):
             thread = Thread(target=module.invoke_cli, args=(args,))
             thread.start()
 
