@@ -28,6 +28,11 @@ class State:
             type=ArgTypes.working_directory_type,
             default=Path('.').absolute(),
         )
+        self.parser.add_argument(
+            '-P',
+            '--persistent',
+            action='store_true',
+        )
 
         self.working_dir = self.parser.get_default('working_dir')
 
