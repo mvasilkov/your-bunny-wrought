@@ -3,6 +3,7 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import socket
 
+from .. import VERSION
 from ..argtypes import ArgTypes
 
 __all__ = ['init_cli', 'invoke_cli', 'serve_static']
@@ -17,7 +18,7 @@ class ServerClass(ThreadingHTTPServer):
 
 class HandlerClass(SimpleHTTPRequestHandler):
     def version_string(self):
-        return 'yourbunnywrought'
+        return f'Your Bunny Wrought/{VERSION}'
 
 
 def _get_best_family(*address):

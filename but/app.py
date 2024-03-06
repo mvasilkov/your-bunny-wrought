@@ -9,7 +9,7 @@ OUR_ROOT = Path(__file__).parents[1].resolve()
 
 if __name__ == '__main__' and not __package__:
     sys.path.insert(0, str(OUR_ROOT))
-    __package__ = 'yourbunnywrought'
+    __package__ = 'but'
 
 from . import VERSION
 from .binaries import PLATFORM

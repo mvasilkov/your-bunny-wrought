@@ -11,20 +11,20 @@ requires-python = ">=3.12"
 dynamic = ["version", "dependencies"]
 
 [project.scripts]
-but = "yourbunnywrought.app:main"
+but = "but.app:main"
 
 [tool.setuptools.dynamic]
-version = { attr = "yourbunnywrought.VERSION" }
+version = { attr = "but.VERSION" }
 dependencies = { file = "requirements.txt" }
 
 [tool.setuptools.packages.find]
-include = ["yourbunnywrought*"]
+include = ["but*"]
 
 [tool.setuptools.package-data]
-"yourbunnywrought.binaries.linux_x86_64" = ["*.xz"]
-"yourbunnywrought.binaries.macos_arm64" = ["*.xz"]
-"yourbunnywrought.binaries.windows_amd64" = ["*.xz"]
-"yourbunnywrought.http" = ["useragents.json"]
+"but.binaries.linux_x86_64" = ["*.xz"]
+"but.binaries.macos_arm64" = ["*.xz"]
+"but.binaries.windows_amd64" = ["*.xz"]
+"but.http" = ["useragents.json"]
 
 [tool.black]
 line-length = 119
