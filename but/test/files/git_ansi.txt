@@ -1,0 +1,72 @@
+[33mcommit 445aadc182cbf3dab530b3bcaaed955998b5646d[m
+Author: Mark Vasilkov <я котик пур-пур@gmail.com>
+Date:   Sat Feb 24 22:38:21 2024 +0200
+
+    Support for persistent external executables
+
+[1mdiff --git a/yourbunnywrought/args.py b/yourbunnywrought/args.py[m
+[1mindex e02c31b..63e0dd4 100644[m
+[1m--- a/yourbunnywrought/args.py[m
+[1m+++ b/yourbunnywrought/args.py[m
+[36m@@ -28,6 +28,11 @@[m [mclass State:[m
+             type=ArgTypes.working_directory_type,[m
+             default=Path('.').absolute(),[m
+         )[m
+[32m+[m[32m        self.parser.add_argument([m
+[32m+[m[32m            '-P',[m
+[32m+[m[32m            '--persistent',[m
+[32m+[m[32m            action='store_true',[m
+[32m+[m[32m        )[m
+ [m
+         self.working_dir = self.parser.get_default('working_dir')[m
+ [m
+[1mdiff --git a/yourbunnywrought/external/cli.py b/yourbunnywrought/external/cli.py[m
+[1mindex 1ba6577..47a1d6b 100644[m
+[1m--- a/yourbunnywrought/external/cli.py[m
+[1m+++ b/yourbunnywrought/external/cli.py[m
+[36m@@ -16,6 +16,4 @@[m [mdef init_cli(parent):[m
+ def invoke_cli(args):[m
+     executable = getattr(Tools, args.command)[m
+ [m
+[31m-    result = executable.run(*args.options)[m
+[31m-[m
+[31m-    print(result)[m
+[32m+[m[32m    executable.run(*args.options)[m
+[1mdiff --git a/yourbunnywrought/external/external_executable.py b/yourbunnywrought/external/external_executable.py[m
+[1mindex 1d14f99..e17008c 100644[m
+[1m--- a/yourbunnywrought/external/external_executable.py[m
+[1m+++ b/yourbunnywrought/external/external_executable.py[m
+[36m@@ -4,7 +4,7 @@[m [mfrom functools import cached_property[m
+ from pathlib import Path[m
+ import re[m
+ from shutil import which[m
+[31m-from subprocess import check_output[m
+[32m+[m[32mfrom subprocess import check_call, check_output[m
+ [m
+ from ..binaries import PLATFORM[m
+ from .node_modules import find_node_modules_binary[m
+[36m@@ -37,7 +37,10 @@[m [mclass ExternalExecutable:[m
+ [m
+         return version.group(1)[m
+ [m
+[31m-    def run(self, *args) -> str:[m
+[32m+[m[32m    def run(self, *args):[m
+[32m+[m[32m        check_call([self.executable_path, *args])[m
+[32m+[m
+[32m+[m[32m    def run_read_output(self, *args) -> str:[m
+         return check_output([self.executable_path, *args], encoding='utf-8')[m
+ [m
+ [m
+[1mdiff --git a/yourbunnywrought/scripts/batch.py b/yourbunnywrought/scripts/batch.py[m
+[1mindex 8b8edab..5e9657e 100644[m
+[1m--- a/yourbunnywrought/scripts/batch.py[m
+[1m+++ b/yourbunnywrought/scripts/batch.py[m
+[36m@@ -23,7 +23,7 @@[m [mdef run(args, module) -> Thread | None:[m
+     store.working_directory = args.working_dir[m
+ [m
+     if module is not None:[m
+[31m-        if getattr(module.invoke_cli, 'persistent', False):[m
+[32m+[m[32m        if args.persistent or getattr(module.invoke_cli, 'persistent', False):[m
+             thread = Thread(target=module.invoke_cli, args=(args,))[m
+             thread.start()[m
+ [m

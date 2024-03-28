@@ -1,0 +1,72 @@
+commit 445aadc182cbf3dab530b3bcaaed955998b5646d
+Author: Mark Vasilkov <я котик пур-пур@gmail.com>
+Date:   Sat Feb 24 22:38:21 2024 +0200
+
+    Support for persistent external executables
+
+diff --git a/yourbunnywrought/args.py b/yourbunnywrought/args.py
+index e02c31b..63e0dd4 100644
+--- a/yourbunnywrought/args.py
++++ b/yourbunnywrought/args.py
+@@ -28,6 +28,11 @@ class State:
+             type=ArgTypes.working_directory_type,
+             default=Path('.').absolute(),
+         )
++        self.parser.add_argument(
++            '-P',
++            '--persistent',
++            action='store_true',
++        )
+ 
+         self.working_dir = self.parser.get_default('working_dir')
+ 
+diff --git a/yourbunnywrought/external/cli.py b/yourbunnywrought/external/cli.py
+index 1ba6577..47a1d6b 100644
+--- a/yourbunnywrought/external/cli.py
++++ b/yourbunnywrought/external/cli.py
+@@ -16,6 +16,4 @@ def init_cli(parent):
+ def invoke_cli(args):
+     executable = getattr(Tools, args.command)
+ 
+-    result = executable.run(*args.options)
+-
+-    print(result)
++    executable.run(*args.options)
+diff --git a/yourbunnywrought/external/external_executable.py b/yourbunnywrought/external/external_executable.py
+index 1d14f99..e17008c 100644
+--- a/yourbunnywrought/external/external_executable.py
++++ b/yourbunnywrought/external/external_executable.py
+@@ -4,7 +4,7 @@ from functools import cached_property
+ from pathlib import Path
+ import re
+ from shutil import which
+-from subprocess import check_output
++from subprocess import check_call, check_output
+ 
+ from ..binaries import PLATFORM
+ from .node_modules import find_node_modules_binary
+@@ -37,7 +37,10 @@ class ExternalExecutable:
+ 
+         return version.group(1)
+ 
+-    def run(self, *args) -> str:
++    def run(self, *args):
++        check_call([self.executable_path, *args])
++
++    def run_read_output(self, *args) -> str:
+         return check_output([self.executable_path, *args], encoding='utf-8')
+ 
+ 
+diff --git a/yourbunnywrought/scripts/batch.py b/yourbunnywrought/scripts/batch.py
+index 8b8edab..5e9657e 100644
+--- a/yourbunnywrought/scripts/batch.py
++++ b/yourbunnywrought/scripts/batch.py
+@@ -23,7 +23,7 @@ def run(args, module) -> Thread | None:
+     store.working_directory = args.working_dir
+ 
+     if module is not None:
+-        if getattr(module.invoke_cli, 'persistent', False):
++        if args.persistent or getattr(module.invoke_cli, 'persistent', False):
+             thread = Thread(target=module.invoke_cli, args=(args,))
+             thread.start()
+ 
