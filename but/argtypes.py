@@ -48,8 +48,10 @@ class ArgTypes:
 
         results = [
             Path(state.working_dir, value).resolve(),
+            Path(state.working_dir, value + '.py').resolve(),
             Path(state.working_dir, value + '.b').resolve(),
             Path(state.working_dir, 'scripts', value).resolve(),
+            Path(state.working_dir, 'scripts', value + '.py').resolve(),
             Path(state.working_dir, 'scripts', value + '.b').resolve(),
         ]
 

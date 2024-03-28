@@ -3,6 +3,7 @@ from __future__ import annotations
 from io import StringIO
 from pathlib import Path
 from shlex import split
+import subprocess
 import sys
 from threading import Thread
 from typing import IO
@@ -104,4 +105,8 @@ def init_cli(parent):
 def invoke_cli(args):
     match args.command:
         case 'run_script' | 'run':
+            if isinstance(args.script_file, Path) and args.script_file.suffix == '.py':
+                subprocess.run([sys.executable, args.script_file])
+                return
+
             run_script(args.script_file)
