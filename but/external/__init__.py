@@ -6,6 +6,13 @@ __all__ = ['Tools', 'find_node_modules', 'find_node_modules_binary']
 
 
 class Tools:
+    docker = LazyVariable(
+        lambda: ExternalExecutable(
+            executable='docker',
+            version_option='--version',
+            version_pattern=r'Docker version (.+?),',
+        )
+    )
     ffmpeg = LazyVariable(
         lambda: ExternalExecutable(
             executable='ffmpeg',
