@@ -8,7 +8,7 @@ from .node_modules import find_node_modules, find_node_modules_binary
 
 __all__ = ['Tools', 'find_node_modules', 'find_node_modules_binary']
 
-PORTS = 'reireireireireireireireirei/ports:1.0.1'
+PORTS_IMAGE = 'reireireireireireireireirei/ports:1.0.1'
 
 
 class Tools:
@@ -33,9 +33,18 @@ class Tools:
             version_pattern=r'Version (\S+)',
         )
     )
+    advzip = LazyVariable(
+        lambda: ExternalExecutableDocker(
+            docker_image=PORTS_IMAGE,
+            executable='/usr/local/bin/advzip',
+            version_option='--version',
+            version_pattern=r'advancecomp (\S+)',
+        )
+    )
     jpeg2png = LazyVariable(
         lambda: ExternalExecutableDocker(
-            docker_image=PORTS,
+            docker_image=PORTS_IMAGE,
+            platform='linux/amd64',
             executable='/usr/local/bin/jpeg2png',
             version_option='--version',
             version_pattern=r'jpeg2png version (\S+)',

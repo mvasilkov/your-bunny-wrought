@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from functools import cached_property
+from functools import cache, cached_property
 from pathlib import Path
 import re
 from shutil import which
-from subprocess import check_call, check_output
+from subprocess import CalledProcessError, check_call, check_output
 
 from ..binaries import PLATFORM
 from .node_modules import find_node_modules_binary
@@ -16,6 +16,8 @@ __all__ = [
 ]
 
 NODEJS_EXT = '.cmd' if PLATFORM.startswith('win') else ''
+
+which = cache(which)
 
 
 class ExternalExecutable:
@@ -67,8 +69,17 @@ class ExternalExecutableNodeJS(ExternalExecutable):
 
 
 class ExternalExecutableDocker(ExternalExecutable):
-    def __init__(self, *, docker_image: str, executable: str, version_option: str, version_pattern: str):
+    def __init__(
+        self,
+        *,
+        docker_image: str,
+        executable: str,
+        version_option: str,
+        version_pattern: str,
+        platform: str | None = None,
+    ):
         self.docker_image = docker_image
+        self.platform = platform
         super().__init__(
             executable=executable,
             version_option=version_option,
@@ -76,6 +87,19 @@ class ExternalExecutableDocker(ExternalExecutable):
         )
 
     @cached_property
+    def docker_platform(self) -> str | None:
+        if self.platform is not None:
+            return self.platform
+
+        if (path := which('docker')) is not None:
+            try:
+                platform = check_output([path, 'info', '-f', '{{.OSType}}/{{.Architecture}}'], encoding='utf-8')
+                return platform.rstrip()
+            except CalledProcessError:
+                pass
+
+    @cached_property
     def executable_path(self) -> list[str] | None:
         if (path := which('docker')) is not None:
-            return [path, 'run', '--rm', self.docker_image, self.executable]
+            platform = ['--platform', self.docker_platform] if self.docker_platform is not None else []
+            return [path, 'run', *platform, '--rm', self.docker_image, self.executable]
