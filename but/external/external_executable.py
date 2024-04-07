@@ -9,7 +9,11 @@ from subprocess import check_call, check_output
 from ..binaries import PLATFORM
 from .node_modules import find_node_modules_binary
 
-__all__ = ['ExternalExecutable']
+__all__ = [
+    'ExternalExecutable',
+    'ExternalExecutableNodeJS',
+    'ExternalExecutableDocker',
+]
 
 NODEJS_EXT = '.cmd' if PLATFORM.startswith('win') else ''
 
@@ -22,14 +26,15 @@ class ExternalExecutable:
         self.version_string = self.check_available()
 
     @cached_property
-    def executable_path(self) -> str | None:
-        return which(self.executable)
+    def executable_path(self) -> list[str] | None:
+        if (path := which(self.executable)) is not None:
+            return [path]
 
     def check_available(self) -> str:
         if self.executable_path is None:
             raise RuntimeError(f'Cannot resolve {self.executable}')
 
-        result = check_output([self.executable_path, self.version_option], encoding='utf-8')
+        result = check_output([*self.executable_path, self.version_option], encoding='utf-8')
 
         version = re.match(self.version_pattern, result, re.MULTILINE)
         if version is None:
@@ -38,21 +43,39 @@ class ExternalExecutable:
         return version.group(1)
 
     def run(self, *args):
-        check_call([self.executable_path, *args])
+        check_call([*self.executable_path, *args])
 
     def run_read_output(self, *args) -> str:
-        return check_output([self.executable_path, *args], encoding='utf-8')
+        return check_output([*self.executable_path, *args], encoding='utf-8')
 
 
 class ExternalExecutableNodeJS(ExternalExecutable):
     def __init__(self, *, executable: str, version_option: str, version_pattern: str):
         super().__init__(
-            executable=executable + NODEJS_EXT, version_option=version_option, version_pattern=version_pattern
+            executable=executable + NODEJS_EXT,
+            version_option=version_option,
+            version_pattern=version_pattern,
         )
 
     @cached_property
-    def executable_path(self) -> Path | str | None:
-        if (result := find_node_modules_binary(self.executable)) is not None:
-            return result
+    def executable_path(self) -> list[Path | str] | None:
+        if (path := find_node_modules_binary(self.executable)) is not None:
+            return [path]
 
-        return which(self.executable)
+        if (path := which(self.executable)) is not None:
+            return [path]
+
+
+class ExternalExecutableDocker(ExternalExecutable):
+    def __init__(self, *, docker_image: str, executable: str, version_option: str, version_pattern: str):
+        self.docker_image = docker_image
+        super().__init__(
+            executable=executable,
+            version_option=version_option,
+            version_pattern=version_pattern,
+        )
+
+    @cached_property
+    def executable_path(self) -> list[str] | None:
+        if (path := which('docker')) is not None:
+            return [path, 'run', '--rm', self.docker_image, self.executable]

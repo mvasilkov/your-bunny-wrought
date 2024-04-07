@@ -1,8 +1,14 @@
 from ..lazy import LazyVariable
-from .external_executable import ExternalExecutable, ExternalExecutableNodeJS
+from .external_executable import (
+    ExternalExecutable,
+    ExternalExecutableDocker,
+    ExternalExecutableNodeJS,
+)
 from .node_modules import find_node_modules, find_node_modules_binary
 
 __all__ = ['Tools', 'find_node_modules', 'find_node_modules_binary']
+
+PORTS = 'reireireireireireireireirei/ports:1.0.1'
 
 
 class Tools:
@@ -25,6 +31,14 @@ class Tools:
             executable='tsc',
             version_option='--version',
             version_pattern=r'Version (\S+)',
+        )
+    )
+    jpeg2png = LazyVariable(
+        lambda: ExternalExecutableDocker(
+            docker_image=PORTS,
+            executable='/usr/local/bin/jpeg2png',
+            version_option='--version',
+            version_pattern=r'jpeg2png version (\S+)',
         )
     )
 
