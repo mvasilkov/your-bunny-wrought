@@ -9,6 +9,7 @@ from .node_modules import find_node_modules, find_node_modules_binary
 __all__ = ['Tools', 'find_node_modules', 'find_node_modules_binary']
 
 PORTS_IMAGE = 'reireireireireireireireirei/ports:1.0.1'
+PORTS_IMAGE_AMD64 = PORTS_IMAGE + '-amd64'
 
 
 class Tools:
@@ -41,9 +42,17 @@ class Tools:
             version_pattern=r'advancecomp (\S+)',
         )
     )
-    jpeg2png = LazyVariable(
+    ect = LazyVariable(
         lambda: ExternalExecutableDocker(
             docker_image=PORTS_IMAGE,
+            executable='/usr/local/bin/ect',
+            version_option='-help',
+            version_pattern=r'Efficient Compression Tool[\s\S]+?^Version (\S+)',
+        )
+    )
+    jpeg2png = LazyVariable(
+        lambda: ExternalExecutableDocker(
+            docker_image=PORTS_IMAGE_AMD64,
             platform='linux/amd64',
             executable='/usr/local/bin/jpeg2png',
             version_option='--version',
