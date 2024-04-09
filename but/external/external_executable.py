@@ -7,6 +7,7 @@ from shutil import which
 from subprocess import CalledProcessError, check_call, check_output
 
 from ..binaries import PLATFORM
+from ..store import Store
 from .node_modules import find_node_modules_binary
 
 __all__ = [
@@ -103,3 +104,22 @@ class ExternalExecutableDocker(ExternalExecutable):
         if (path := which('docker')) is not None:
             platform = ['--platform', self.docker_platform] if self.docker_platform is not None else []
             return [path, 'run', *platform, '--rm', self.docker_image, self.executable]
+
+    @property
+    def executable_path_mount(self) -> list[str] | None:
+        if (path := self.executable_path) is not None:
+            store = Store()
+
+            working_dir = store.working_directory
+            top_level_dir = Path('~').expanduser()
+            if not working_dir.is_relative_to(top_level_dir):
+                return path
+
+            (path := path[:])[-2:-2] = ['-v', f'{top_level_dir}:{top_level_dir}', '-w', working_dir]
+            return path
+
+    def run(self, *args):
+        check_call([*self.executable_path_mount, *args])
+
+    def run_read_output(self, *args) -> str:
+        return check_output([*self.executable_path_mount, *args], encoding='utf-8')
