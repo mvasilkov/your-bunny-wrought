@@ -27,6 +27,20 @@ class Tools:
             version_pattern=r'ffmpeg version (\S+)',
         )
     )
+    rollup = LazyVariable(
+        lambda: ExternalExecutableNodeJS(
+            executable='rollup',
+            version_option='--version',
+            version_pattern=r'rollup v(\S+)',
+        )
+    )
+    terser = LazyVariable(
+        lambda: ExternalExecutableNodeJS(
+            executable='terser',
+            version_option='--version',
+            version_pattern=r'terser (\S+)',
+        )
+    )
     tsc = LazyVariable(
         lambda: ExternalExecutableNodeJS(
             executable='tsc',
@@ -39,7 +53,7 @@ class Tools:
             docker_image=PORTS_IMAGE,
             executable='/usr/local/bin/advzip',
             version_option='--version',
-            version_pattern=r'advancecomp (\S+)',
+            version_pattern=r'advancecomp v(\S+)',
         )
     )
     ect = LazyVariable(
