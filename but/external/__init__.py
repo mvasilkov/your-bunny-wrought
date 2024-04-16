@@ -27,6 +27,13 @@ class Tools:
             version_pattern=r'ffmpeg version (\S+)',
         )
     )
+    michikoid = LazyVariable(
+        lambda: ExternalExecutableNodeJS(
+            executable='michikoid',
+            version_option='--version',
+            version_pattern=r'Michikoid version (\S+)',
+        )
+    )
     rollup = LazyVariable(
         lambda: ExternalExecutableNodeJS(
             executable='rollup',
