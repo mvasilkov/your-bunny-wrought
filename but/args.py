@@ -33,6 +33,11 @@ class State:
             '--persistent',
             action='store_true',
         )
+        self.parser.add_argument(
+            '-V',
+            '--version',
+            action='store_true',
+        )
 
         self.working_dir = self.parser.get_default('working_dir')
 
@@ -48,6 +53,8 @@ state = State()
 def get_args_module(*xs):
     state.working_dir = state.parser.get_default('working_dir')
     args = state.parser.parse_args(*xs)
+    if args.command is None and args.version:
+        args.command = 'version'
     module = CLI_RESOLVE_CMD_TO_MOD.get(args.command)
 
     return args, module

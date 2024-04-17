@@ -1,6 +1,6 @@
 from .external import cli as external
 from .http import server
-from .scripts import batch, echo
+from .scripts import batch, echo, version
 from .template import render
 from .watch import watch_files
 
@@ -11,6 +11,7 @@ CLI_MODULES = [
     server,
     batch,
     echo,
+    version,
     render,
     watch_files,
 ]

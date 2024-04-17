@@ -27,7 +27,8 @@ def main():
 
     args, module = get_args_module()
 
-    zprint(BUNNER)
+    if module is None or not getattr(module.invoke_cli, 'naked', False):
+        zprint(BUNNER)
 
     if (thread := run(args, module)) is not None:
         try:

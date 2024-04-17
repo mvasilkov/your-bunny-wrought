@@ -14,3 +14,6 @@ def invoke_cli(args):
     match args.command:
         case 'echo':
             print(' '.join(args.text), end='' if args.n else '\n')
+
+
+invoke_cli.naked = True
