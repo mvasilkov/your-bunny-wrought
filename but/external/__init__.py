@@ -1,3 +1,5 @@
+from enum import StrEnum
+
 from ..lazy import LazyVariable
 from .external_executable import (
     ExternalExecutable,
@@ -6,7 +8,7 @@ from .external_executable import (
 )
 from .node_modules import find_node_modules, find_node_modules_binary
 
-__all__ = ['Tools', 'find_node_modules', 'find_node_modules_binary']
+__all__ = ['find_node_modules_binary', 'find_node_modules', 'SupportedTools', 'Tools']
 
 PORTS_IMAGE = 'reireireireireireireireirei/ports:1.0.1'
 PORTS_IMAGE_AMD64 = PORTS_IMAGE + '-amd64'
@@ -83,3 +85,6 @@ class Tools:
 
     def __new__(cls):
         raise TypeError(f'Cannot instantiate static class {cls.__name__}')
+
+
+SupportedTools = StrEnum('SupportedTools', {t: t for t in vars(Tools) if not t.startswith('_')})

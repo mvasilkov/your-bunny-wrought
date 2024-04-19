@@ -1,8 +1,8 @@
-from . import Tools
+from . import SupportedTools, Tools
 
 __all__ = ['init_cli', 'invoke_cli']
 
-_props = [prop for prop in vars(Tools) if not prop.startswith('_')]
+_props = list(SupportedTools)
 
 
 def init_cli(parent):
